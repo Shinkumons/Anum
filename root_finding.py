@@ -9,7 +9,7 @@ def is_good_enough(a, b, cnt, fan, fbn):
 
     return abs(a-b) <= 1e-15
 
-def bissection(f, a, b, max_iter=100, stop_cond=is_good_enough,
+def bissection(f, a: float, b: float, max_iter=100, stop_cond=is_good_enough,
                is_plotting=False):
     """
     :param f: function
@@ -30,8 +30,6 @@ def bissection(f, a, b, max_iter=100, stop_cond=is_good_enough,
         guess_root = []
 
     # Errors Management:  test if values are NaN or inf
-    if f(a)*f(b) >= 0:
-        raise ValueError(f"f(a)f(b) must be less than 0, current {f(a)*f(b)}")
     if math.isnan(a):
         raise ValueError("Parameter 'a' is NaN")
     if math.isnan(b):
@@ -48,7 +46,13 @@ def bissection(f, a, b, max_iter=100, stop_cond=is_good_enough,
     if math.isnan(fbn):
         raise ValueError("f is not defined in b")
 
+    if f(a)*f(b) >= 0:
+        raise ValueError(f"f(a)f(b) must be less than 0, current {f(a)*f(b)}")
 
+    if fan == 0: return a
+    if fbn == 0: return b
+
+    
     # Permute a and b if needed
     if fan > 0 and fbn < 0:
         a, b, fan, fbn = b, a, fbn, fan
@@ -103,16 +107,24 @@ def scipy_brentq(f, a, b):
         full_output=True,
         disp=True
     )
-        
-if __name__ == "__main__":
-    print(scipy.optimize.brentq(lambda x: x**3 - 2, 0, 50))
-    root, guesses =  bissection(lambda x: x**3 - 2, 0, 2, is_plotting=True)
-    guesses = [abs(root-i) for  i in guesses]
+
+def embedded_plot(datas: list, root: float):
     fig = plt.figure()
+    error_data = [abs(root-i) for  i in datas]
     axes = fig.add_axes([0.1, 0.1, 0.98, 0.98])
-    y = list(range(len(guesses)))
+    y = list(range(len(datas)))
     axes.set_yscale('log')
-    plt.plot(y, guesses)
+    plt.plot(y, error_data)
     plt.grid()
     plt.show()
+
+def newton(f, f_der, a, b, stop_cond=is_good_enough, max_iter=150):
+    pass
+    
+if __name__ == "__main__":
+    print(scipy.optimize.brentq(lambda x: x**3 - 2, 0, 50))
+    root, guesses =  bissection(lambda x: x**3 - 3, 0, 2, is_plotting=True)
+
+    embedded_plot(guesses, root)
+    
     unittest.main()
