@@ -191,6 +191,52 @@ def newton(f, f_der, a, b, stop_cond=is_good_enough_newton, max_iter=150, is_plo
             return xn
     else:
         return None
+
+def find_unimodal_roots(f, df, a: float, b: float,
+                        max_iter = 150):
+
+    dfa, dfb = df(a), df(b)
+
+    if math.isnan(dfa): raise ValueError("f' is NaN at a")
+    if math.isnan(dfb): raise ValueError("f' is NaN at b")
+    if math.isinf(dfa): raise ValueError("f' is infinite at a")
+    if math.isinf(dfb): raise ValueError("f' is infinite at b")
+
+    fa, fb = f(a), f(b)
+    
+    if math.isnan(fa): raise ValueError("f is NaN at a")
+    if math.isnan(fb): raise ValueError("f is NaN at b")
+    if math.isinf(fa): raise ValueError("f is infinite at a")
+    if math.isinf(fb): raise ValueError("f is infinite at b")
+
+    
+    if dfa*dfb > 0:
+        if fa*fb < 0:
+            root1 = scipy.optimize.brentq(f, a, b, maxiter = max_iter)
+            return [root1]
+        else:
+            return []
+    if dfa = 0:
+        m = a
+    elif dfb = 0:
+        m = b
+    else:
+        m = scipy.optimize.brentq(df, a, b, maxiter = max_iter)
+        
+    res_l = []
+
+    fm = f(m)
+
+    if fm = 0:
+        return [m]
+    if fa*fm < 0:
+        root1 = scipy.optimize.brentq(f, a, m, maxiter = max_iter)
+        res_l.append(root1)
+    if fm*fb < 0:
+        root2 = scipy.optimize.brentq(f, m, b, maxiter = max_iter)
+        res_l.append(root2)
+
+    return res_l
     
 if __name__ == "__main__":
     print(scipy.optimize.brentq(lambda x: x**3 - 2, 1, 10))
