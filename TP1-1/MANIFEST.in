@@ -1,0 +1,5 @@
+# MANIFEST.in 							-*-conf-*-
+# http://docs.python.org/distutils/sourcedist.html#manifest-template
+global-include *.py *.in *.txt
+graft doc
+global-exclude ._* Thumbs.db .DS_Store __MACOSX *~

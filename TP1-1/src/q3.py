@@ -18,9 +18,9 @@ def q3(a: float, y: float):
 
     # Errors managements
     if a<0: raise ValueError("a must be greater or equals to 0")
-    if math.isNaN(a): raise ValueError("a is NaN")
+    if math.isnan(a): raise ValueError("a is NaN")
     if math.isinf(a): raise ValueError("a is infinite")
-    if math.isNaN(y): raise ValueError("y is NaN")
+    if math.isnan(y): raise ValueError("y is NaN")
     if math.isinf(y): raise ValueError("y is infinite")
 
     # functions definitions
@@ -31,7 +31,7 @@ def q3(a: float, y: float):
     r_1 = y-a
     r_2 = y+a
 
-    if a < 1:
+    if a <= 1:
         # management of the case where we cannot divide into intervals such that
         # the function is unimodal on these intervals
 
@@ -49,7 +49,7 @@ def q3(a: float, y: float):
         # calculate lowest and greater k value for x_0 + 2*k*pi
         k_1 = math.floor((r_1 - x_0) / (2*math.pi))
         k_2 = math.ceil((r_2 - x_0)/(2*math.pi))
-
+        roots_list = []
 
         # Root searching in the intervals
         for i in range(k_1, k_2):
@@ -59,11 +59,22 @@ def q3(a: float, y: float):
             m = -x_0 + 2*i*math.pi
             fb_1, fm, fb_2 = f(b_1), f(m), f(b_2)
 
-            if fb_1 < 0:
-                print(scipy.optimize.brentq(f, b_1, m))
+
+            # Rounding is for testing if a root is already in the list to avoid
+            # doubles
+            if fb_1*fm < 0:
+                r = round(scipy.optimize.brentq(f, b_1, m, xtol=1e-12), 11)
+                if r not in roots_list:
+                    roots_list.append(r)
 
             elif is_zero(fb_1):
-                print(b_1)
+                if b_1 not in roots_list:
+                    roots_list.append(round(b_1, 11))
 
-            if fb_2 < 0:
-                print(scipy.optimize.brentq(f, m, b_2))
+            if fb_2*fm < 0:
+                r = round(scipy.optimize.brentq(f, m, b_2, xtol = 1e-12), 11)
+                if r not in roots_list:
+                    roots_list.append(r)
+
+        roots_list = [str(n) for n in roots_list]
+        print("\n".join(roots_list))
