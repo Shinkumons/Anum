@@ -17,19 +17,20 @@ def is_good_enough_newton(a, b, cnt, xn, f):
 def bissection(f, a: float, b: float, max_iter=100, stop_cond=is_good_enough,
                is_plotting=False):
     """
-    :return: root of f in the bounds of ]a, b[ using bissection method
-    :param f: function
-    :param a: lower bound for bissection
-    :param b: upper bound for bissection
-    :param max_iter: (optionnal) max number of iteration. If the iterations 
+    :param f: continuous function with f(a)*f(b) < 0
+    :param a: bound for bissection
+    :param b: bound for bissection
+    :param max_iter: (optionnal) max number of iteration. If the iterations
     exceed, will return None
-    :param stop_cond: (optionnal) Function that take a, b, iteration number, 
-    f(an) and f(bn) that stop the iteration as you want, currently return if 
+    :param stop_cond: (optionnal) Function that take a, b, iteration number,
+    f(an) and f(bn) that stop the iteration as you want, currently return if
     |a-b| <= 10^-15
     :param is_plotting: if True, return a tuple with the root and a list of the
-    successives guesses of the bissection algorithm. otherise, return only the 
+    successives guesses of the bissection algorithm. otherise, return only the
     root
+    :return: root of f in the bounds of ]a, b[ using bissection method
     """
+    
     if is_plotting:
         guess_root = []
 
@@ -42,28 +43,28 @@ def bissection(f, a: float, b: float, max_iter=100, stop_cond=is_good_enough,
         raise ValueError("Parameter 'a' is inf")
     if math.isinf(b):
         raise ValueError("Parameter 'b' is inf")
-    
-    
+
+
     fan, fbn = f(a), f(b)
     if math.isnan(fan):
         raise ValueError("f is not defined in a")
     if math.isnan(fbn):
         raise ValueError("f is not defined in b")
 
-    if f(a)*f(b) >= 0:
+    if f(a)*f(b) > 0:
         raise ValueError(f"f(a)f(b) must be less than 0, current {f(a)*f(b)}")
 
     if fan == 0: return a
     if fbn == 0: return b
 
-    
+
     # Permute a and b if needed
     if fan > 0 and fbn < 0:
         a, b, fan, fbn = b, a, fbn, fan
     xn = (a+b)/2
     # Loop algorithm
     cnt = 0
-    while not stop_cond(a, b, cnt, fan, fbn) and cnt < max_iter:        
+    while not stop_cond(a, b, cnt, fan, fbn) and cnt < max_iter:
         xn = (a+b)/2
         if is_plotting:
             guess_root.append(xn)
@@ -136,7 +137,7 @@ def embedded_plot_bissect_x_newton(data1: list, data2: list, root: float):
     plt.grid()
     plt.show()
 
-    
+
 def newton(f, f_der, a, b, stop_cond=is_good_enough_newton, max_iter=150, is_plotting=False):
 
     if is_plotting:
@@ -147,7 +148,7 @@ def newton(f, f_der, a, b, stop_cond=is_good_enough_newton, max_iter=150, is_plo
     if math.isinf(a): raise ValueError("a parameter is infinite")
     if math.isinf(b): raise ValueError("n parameter is infinite")
 
-    
+
     fa, fda = f(a), f_der(a)
     fb, fdb = f(b), f_der(b)
 
@@ -165,9 +166,9 @@ def newton(f, f_der, a, b, stop_cond=is_good_enough_newton, max_iter=150, is_plo
     if math.isinf(fdb): raise ValueError("f' is infinite in b")
 
     if fa*fb > 0: raise ValueError(f"No roots guarenteed between {a} and {b}, f(a)*f(b) > 0")
-    
+
     xna, xnb = a-(fa/fda), b-(fb/fdb)
-    
+
     if abs(f(xna)) <= abs(f(xnb)):
         xn = xna
     else:
@@ -203,31 +204,31 @@ def find_unimodal_roots(f, df, a: float, b: float,
     if math.isinf(dfb): raise ValueError("f' is infinite at b")
 
     fa, fb = f(a), f(b)
-    
+
     if math.isnan(fa): raise ValueError("f is NaN at a")
     if math.isnan(fb): raise ValueError("f is NaN at b")
     if math.isinf(fa): raise ValueError("f is infinite at a")
     if math.isinf(fb): raise ValueError("f is infinite at b")
 
-    
+
     if dfa*dfb > 0:
         if fa*fb < 0:
             root1 = scipy.optimize.brentq(f, a, b, maxiter = max_iter)
             return [root1]
         else:
             return []
-    if dfa = 0:
+    if dfa == 0:
         m = a
-    elif dfb = 0:
+    elif dfb == 0:
         m = b
     else:
         m = scipy.optimize.brentq(df, a, b, maxiter = max_iter)
-        
+
     res_l = []
 
     fm = f(m)
 
-    if fm = 0:
+    if fm == 0:
         return [m]
     if fa*fm < 0:
         root1 = scipy.optimize.brentq(f, a, m, maxiter = max_iter)
@@ -237,21 +238,22 @@ def find_unimodal_roots(f, df, a: float, b: float,
         res_l.append(root2)
 
     return res_l
-    
+
+
 if __name__ == "__main__":
     print(scipy.optimize.brentq(lambda x: x**3 - 2, 1, 10))
     root1, guesses1 = newton(lambda x: x**3 -2, lambda x: 3*(x**2), 1, 10, is_plotting=True)
-    
+
     root2, guesses2 =  bissection(lambda x: x**3 - 2, 1, 10, is_plotting=True)
-    
+    print(find_unimodal_roots(lambda x: -x**2 + 1, lambda x: -2*x, -2, 2))
     embedded_plot_bissect_x_newton(guesses1, guesses2, 2**(1/3))
 
     """
     On s'aperçois que la méthode de la bissection a une erreur qui décroit exponentiellement vers 0 (ce qui
     se traduit par une droite sur une échelle logarythmique) avec un graphe similaire a 1/2^n.
-    
+
     On s'aperçois aussi que la méthode de Newton décroit exponentiellement vers 0 malgrès l'échelle logarythmique.
     Donc methode de Newton est beaucoup plus rapide que la bissecton.
     """
-    
+
     unittest.main()
