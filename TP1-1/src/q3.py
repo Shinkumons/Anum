@@ -1,5 +1,6 @@
 import scipy.optimize
 import math
+import sys
 
 def is_zero(a):
     """This function return if a value is close enought to 0.
@@ -10,8 +11,8 @@ def is_zero(a):
     return abs(a) <= 1e-10
 
 def q3(a: float, y: float):
-    """Prints pre-image of y by the function f(x) = x + a*sin(x) on the standard
-    output
+    """Prints pre-image of y by the function f(x) = x + a*sin(x) on the
+    standard output
     :param a: a float, gives the range of sin(x).
     :param y: a float, the value of which you want the pre-images
     """
@@ -31,13 +32,17 @@ def q3(a: float, y: float):
     r_1 = y-a
     r_2 = y+a
 
+    roots_list = []
+
+
     if a <= 1:
-        # management of the case where we cannot divide into intervals such that
-        # the function is unimodal on these intervals
+        # management of the case where we cannot divide into intervals such
+        # that the function is unimodal on these intervals
 
         # In particular, the function is strictly increasing (and thus
         # injective) because its derivative is > 0
-        print(scipy.optimize.brentq(lambda x: x + a*math.sin(x) - y, r_1, r_2))
+        r = round(scipy.optimize.brentq(f, r_1, r_2, xtol = 1e-12), 11)
+        roots_list.append(r)
 
     else :
         # Otherwise we divide the search interval into intervals of length 2*pi
@@ -49,7 +54,6 @@ def q3(a: float, y: float):
         # calculate lowest and greater k value for x_0 + 2*k*pi
         k_1 = math.floor((r_1 - x_0) / (2*math.pi))
         k_2 = math.ceil((r_2 - x_0)/(2*math.pi))
-        roots_list = []
 
         # Root searching in the intervals
         for i in range(k_1, k_2):
@@ -60,6 +64,9 @@ def q3(a: float, y: float):
             fb_1, fm, fb_2 = f(b_1), f(m), f(b_2)
 
 
+            if fm < 0 and is_zero(fm):
+                if m not in roots_list:
+                    roots_list.append(m)
             # Rounding is for testing if a root is already in the list to avoid
             # doubles
             if fb_1*fm < 0:
@@ -76,5 +83,15 @@ def q3(a: float, y: float):
                 if r not in roots_list:
                     roots_list.append(r)
 
-        roots_list = [str(n) for n in roots_list]
-        print("\n".join(roots_list))
+    return roots_list
+
+if __name__ == "__main__":
+    if len(sys.argv) == 3:
+        a = sys.argv[1]
+        y = sys.argv[2]
+        r = q3(float(a), float(y))
+        for i in r:
+            print(i)
+
+    else:
+        raise IOError("not enough argument, need two floats a and y")

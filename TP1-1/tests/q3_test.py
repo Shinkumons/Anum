@@ -4,8 +4,8 @@ import unittest
 
 
 def q3_testing_version(a: float, y: float):
-    """Prints pre-image of y by the function f(x) = x + a*sin(x) on the standard
-    output
+    """Prints pre-image of y by the function f(x) = x + a*sin(x) on the
+    standard output
     :param a: a float, gives the range of sin(x).
     :param y: a float, the value of which you want the pre-images
     """
@@ -28,13 +28,13 @@ def q3_testing_version(a: float, y: float):
     roots_list = []
 
     if a <= 1:
-        # management of the case where we cannot divide into intervals such that
-        # the function is unimodal on these intervals
+        # management of the case where we cannot divide into intervals such
+        # that the function is unimodal on these intervals
 
         # In particular, the function is strictly increasing (and thus
         # injective) because its derivative is > 0
-        roots_list.append(scipy.optimize.brentq(lambda x: x + a*math.sin(x) - y,
-                                                r_1, r_2))
+        r = scipy.optimize.brentq(lambda x: x + a*math.sin(x) - y, r_1, r_2)
+        roots_list.append(r)
 
     else :
         # Otherwise we divide the search interval into intervals of length 2*pi
