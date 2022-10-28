@@ -1,0 +1,34 @@
+* Preuve Q3
+
+Soit $a \geq 0$ et $y\in \mathbb{R}$
+On cherche a trouver les pré-images de la fonction $f(x) = x + a\sin(x)$
+Cela reviens donc a chercher les $x\in \mathbb{R}$ tq $y = f(x) \Leftrightarrow y = x + a\sin(x) \Leftrightarrow x + a\sin(x) - y = 0$
+On doit donc chercher les racines de la fonction $g(x) = x + a\sin(x) - y$
+
+Sachant que $-1\leq \sin(x)\leq 1$ on a donc que $x - a - y \leq g(x) \leq x + a -y$
+Le paramètre de ces droites est $1$ et donc elles sont strictement croissantes.
+ainsi, pour tout $x$, $x + a - y \leq 0 \Rightarrow g(x) \leq 0$ et $x - a - y \geq 0 \Rightarrow g(x) \geq 0$
+on a alors que la racine de $x - a - y$ est $x = y +a$ et la racine de $x + a - y$ est $x = y - a$
+ainsi, pour tout $x \leq y - a$ on a que $g(x)\leq0$ et pour tout $x \geq y+a$ on a que $g(x) \geq 0$
+On en déduit donc que les racines de $g(x)$, si elles existent se trouvent toutes dans l'intervalle $[y -a, y+a]$.
+
+On a l'existence d'une racine de $g(x)$ dans l'intervalle $[y-a, y+a]$ par le TVI, en effet, $g(x)$ est continue car c'est
+une somme et produit de fonctions continues. De plus, $g(y-a) \leq 0$ et $g(y+a) \geq 0$.
+Donc soit $y-a$ est une racine de $g(x)$ soit $y+a$ est une racine de $g(x)$ soit $g(y-a)g(y+a) < 0$ et donc
+par le TVI, on a l'existence d'une racine dans $]y-a, y+a[$
+
+On a que $g$ est dérivable car elle est somme et produit de fonctions dérivables et sa dérivée est $\partial g(x) = 1 + a\cos(x)$
+
+** Dans le cas où $a < 1$
+On sait que $\cos(x)$ est minorée par $-1$ alors, $1-a \leq \partial g(x)$,
+On sait également que $0\leq a < 1$, ainsi $0<1-a\leq \partial g(x) \Rightarrow 0<\partial g(x)$.
+Comme la dérivée est strictement positive, alors la fonction $g$ est strictement croissante, elle est donc injective et ne possède qu'une seule racine dans $[y-a, y+a]$.
+
+On peut donc faire une recherche de racine sur l'intervalle et retourner la solution
+
+** Dans le cas où $a=1$
+Visant a atteindre une contradiction, supposons que $g(x)$ n'est pas strictement croissante c'est à dire,
+$\forall x_1, x_2 \in \mathbb{R}, x_1 < x_2 \Rightarrow g(x_1) \geq g(x_2)$
+Soit $x_1, x_2 \in \mathbb{R}$, on suppose que $x_1 < x_2$
+On a $g(x_1) \geq g(x_2) \Leftrightarrow x_1 + \sin(x_1) \geq x_2 + \sin(x_2)$, on sait que $-1\leq \sin(x) \leq1$
+Ainsi, on a que $x_1 + 1 \geq x_2 - 1$

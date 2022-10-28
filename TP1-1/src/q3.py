@@ -34,7 +34,6 @@ def q3(a: float, y: float):
 
     roots_list = []
 
-
     if a <= 1:
         # management of the case where we cannot divide into intervals such
         # that the function is unimodal on these intervals
