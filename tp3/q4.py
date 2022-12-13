@@ -12,12 +12,6 @@ def func(y, t, m1, m2, k1, k2, f):
     ]
     return equation
 
-def testODE(y, t, b, c):
-    theta, omega = y
-    dydt = [omega, -b*omega - c*np.sin(theta)]
-    return dydt
-
-
 def computeODE(initial_state, m1, m2, k1, k2, omega):
     """
     initial_state -> tuple of 4 element determining x1, x2, dx1/dt and dx2/dt
@@ -42,52 +36,32 @@ def plotODE(t, x1, x2):
     plt.show()
 
 
-initial_state_ls = [
-    (0, 0, 0, 0),
-    (1, 0, 0, 0),
-    (0, 1, 0, 0),
-    (1, 1, 0, 0),
-    (0, 0, 1, 0),
-    (1, 0, 1, 0),
-    (0, 1, 1, 0),
-    (1, 1, 1, 0),
-    (0, 0, 0, 1),
-    (1, 0, 0, 1),
-    (0, 1, 0, 1),
-    (1, 1, 0, 1),
-    (0, 0, 1, 1),
-    (1, 0, 1, 1),
-    (0, 1, 1, 1),
-    (1, 1, 1, 1),
-]
-
-initial_state_ls2 = [
-    (0, 0, 0, 0),
-    (1, 1, 1, 1),
-]
-
-
-def plotPhaseDiagram(initial_states, m1, m2, k1, k2, omega):
+def plotDiagrams(initial_states, m1, m2, k1, k2, omega):
     t = np.linspace(0, 100, 1000)
     f = lambda x: np.sin(x*omega)
     for i, init in enumerate(initial_states):
+        fig, (ax1, ax2) = plt.subplots(1, 2)
         f_args = (m1, m2, k1, k2, f)
         sol = odeint(func, init, t, args = f_args)
-        plt.plot(sol[:, 0], sol[:, 1])
+        ax1.plot(t, sol[:, 0])
+        ax1.plot(t, sol[:, 1])
+        ax1.grid()
+        ax2.plot(sol[:, 0], sol[:, 1])
         plt.grid()
         plt.show()
 
-
-t, x1, x2 = computeODE((0, 0, 0, 0), 1, 1, 1, 1, 1)
-plotODE(t, x1, x2)
+def plot_array_ODE(initial_states, k1, k2, m1, m2, omega):
+    for init in initial_states:
+        t, x1, x2 = computeODE(init, k1, k2, m1, m2, omega)
+        plotODE(t, x1, x2)
 
 initial_states = [
     (0, 0, 0, 0),
     (1, 0, 0, 0),
     (0, 1, 0, 0),
     (0, 0, 1, 0),
-    (0, 0, 0, 1)
+    (0, 0, 0, 1),
+    (0, 0, 0, 0.1)
 ]
-
-
-plotPhaseDiagram(initial_states, 1, 1, 1, 1, 0.5)
+omega = 1
+plotDiagrams(initial_states, 1, 1, 1, 1, omega)
