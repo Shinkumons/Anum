@@ -1,0 +1,11 @@
+MANIFEST.in
+README.txt
+setup.py
+pdf/q2&q3.pdf
+src/tp2_q1.py
+src/tp2_q2.py
+src/tp2_q3.py
+src/TP2.egg-info/PKG-INFO
+src/TP2.egg-info/SOURCES.txt
+src/TP2.egg-info/dependency_links.txt
+src/TP2.egg-info/top_level.txt
