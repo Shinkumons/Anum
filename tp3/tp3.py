@@ -67,9 +67,6 @@ def getLocMaxRec(t_start, t_end, init, m1, m2, k1, k2, omega,
                 finded_max.append((i, x1[i]))
         return finded_max
 
-
-
-
 def plotDiagrams(initial_states, m1, m2, k1, k2, omega):
     t = np.linspace(0, 100, 1000)
     f = lambda x: np.sin(x*omega)
@@ -96,7 +93,6 @@ def q6(init, m1, m2, k1, k2):
         x.append(getMaxRec(0, 100, (0, 0, 0, 0), m1, m2, k1, k2, i))
     
     return om, x
-
 
 initial_states = [
     (0, 0, 0, 0),
@@ -158,7 +154,6 @@ for start, end in inter:
     plt.plot(t, x2)
     plt.grid()
     plt.show()
-
 
 om, x = q6((0, 0, 0, 0), 3, 1, 1, 2)
 print(getIntervalsQ7(om, x))

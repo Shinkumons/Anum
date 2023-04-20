@@ -3,7 +3,16 @@ import numpy as np
 import math
 import sys
 
+# t is always the time range
+# initial_state and init are the initial value of the ode is position and
+# velocity of each masses
+# m1, m2, k1, k2 are the parametter of the ODE
+
+
 def func(y, t, m1, m2, k1, k2, f):
+    """
+    Represent the ODE, should not be modified
+    """
     x1, x2, dx1, dx2 = y
     equation = [
         dx1,
@@ -15,6 +24,7 @@ def func(y, t, m1, m2, k1, k2, f):
 
 def computeODE(initial_state, m1, m2, k1, k2, omega):
     """
+    Compute the ODE an return time and position of the masses
     initial_state -> tuple of 4 element determining x1, x2, dx1/dt and dx2/dt
     k1 -> recall constant of m1
     k2 -> recall constant of m2
@@ -28,19 +38,33 @@ def computeODE(initial_state, m1, m2, k1, k2, omega):
     sol = odeint(func, initial_state, t, args=f_args)
     return (t, sol[:, 0], sol[:, 1])
 
-def relative_error(ts_dx, te_dx, a, b):
-    return abs(ts_dx - te_dx) <= 1e-12 * (abs(a) + abs(b)) + 1e-13
+def relative_error(ts_dx, te_dx, a, b, eps, delt):
+    # return True if the derivative between t_start and t_end are close enought
+    # return False otherise
+    return abs(ts_dx - te_dx) <= eps * (abs(a) + abs(b)) + delt
 
 def getMaxRec(t_start, t_end, init, m1, m2, k1, k2, omega):
+    """
+    return the max value of the local maximums returned by getLocMaxRec
+    """
     locMaxi = getLocMaxRec(t_start, t_end, init, m1, m2, k1, k2, omega)
     maxi = max([i[1] for i in locMaxi])
     return maxi
 
 def getLocMaxRec(t_start, t_end, init, m1, m2, k1, k2, omega,
                  ts_dx=None, te_dx=None, ts_val = None, a=0, b=100):
-    if ts_val != None and relative_error(ts_dx, te_dx, a, b):
+    """
+    Compute recursively the local maximums of x1 for a given initial states and
+    parametters
+    t_start, t_end ->  the range of computation
+    ts_dx, te_dx -> the derivative of t_start an t_end
+    ts_val -> the value of t_start
+    Returns a list with all locals maximums of the ODE
+    """
+    # base case
+    if ts_val != None and relative_error(ts_dx, te_dx, a, b, 1e-12, 1e-13):
         return [(t_start, ts_val)]
-    else:
+    else: # recursion case
         finded_max = []
         t = np.linspace(t_start, t_end, 100)
         f = lambda x: np.sin(x*omega)
@@ -61,14 +85,20 @@ def getLocMaxRec(t_start, t_end, init, m1, m2, k1, k2, omega,
         return finded_max
 
 def evalOnInterval(init, m1, m2, k1, k2):
+    """
+    Compute max value of x1 for omega in [0, 2.5]
+    """
     om = np.linspace(0, 2.5, 1000)
     x = []
     for i in om:
         x.append(getMaxRec(0, 100, (0, 0, 0, 0), m1, m2, k1, k2, i))
-
     return om, x
 
 def getUnimodalIntervals(om, x):
+    """
+    Calculate approximatively strictly unimodal interval of the function
+    for golden section search
+    """
     intervals = []
     start = 0
     isInt = False
@@ -86,9 +116,11 @@ def getUnimodalIntervals(om, x):
 
 gr = (math.sqrt(5) + 1) / 2
 
-gr = (math.sqrt(5) + 1) / 2
-
 def goldenSectionSearch(a, b, m1, m2, k1, k2):
+    """
+    Golden section search return the maximum(resp. minimum) on a strictly
+    unimodal function.
+    """
     c = b - (b - a) / gr
     d = a + (b - a) / gr
 
@@ -108,6 +140,7 @@ def goldenSectionSearch(a, b, m1, m2, k1, k2):
 
 if __name__ == "__main__":
     k = len(sys.argv)
+    # Bad input management
     if k > 5 :
         raise IOError(f"too many arguments, needed : 5, got : {k}")
     if k < 5 :
