@@ -320,8 +320,7 @@ def computeGamma(a, alpha, eta, delta, initial_state, obj):
 
 def computeTMax(a, alpha, gamma, eta, delta, initial_state):
     """
-    Retourne le gamma minimum à atteindre pour que l'infection ne dépasse
-    pas la valeur obj
+    Retourne la valeur maximum de la fonction T
 
     :param a: taux d'infection
     :param alpha: taux de guérison naturelle
@@ -329,8 +328,7 @@ def computeTMax(a, alpha, gamma, eta, delta, initial_state):
     :param eta: taux de guérison
     :param delta: taux de réduction de transmission
     :param initial_state: conditions initiales de l'edo
-    :return: le gamma tel que le taux d'infecté maximal de l'épidémie
-             est obj
+    :return: la valeur maximale de la fonction T de l'edo
     """
 
     
