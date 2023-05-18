@@ -1,16 +1,21 @@
 """Projet épidémiologie
 Usage:
-  projet_epi.py -c <a> <alpha>
   projet_epi.py -h
-  projet_epi.py -m <a> <alpha> <i>
+  projet_epi.py --q6 <a> <alpha>
+  projet_epi.py --q8 <a> <alpha> <i>
   projet_epi.py --q9 <a> <alpha>
   projet_epi.py --q9 <a> <alpha> <nbr_test>
   projet_epi.py --q10 <a> <i0> <find>
+  projet_epi.py --q11
 
 Options:
   -h            montre cette fenêtre
-  -c            calcule l'EDO en fonction de <a> et <alpha> et affiche le triangle des solutions
-  -m           calcule le nombre d'infecté minimal pour atteindre un seuil d'infection i
+  --q6          calcule l'EDO en fonction de <a> et <alpha> et affiche le
+                triangle des solutions
+  --q8          calcule le nombre d'infecté minimal pour atteindre un seuil
+                d'infection i
+  --q10
+  --q11
 """
 from scipy.integrate import odeint
 from scipy.optimize import brentq
@@ -43,13 +48,17 @@ immunisées par unité de temps
 # dI/dx = (a*S-alpha)*I
 def sir(y, t, a, alpha):
     '''
-    Calcule la dérivée de S et I en fonction de y et t des équations de paramètres a et alpha.
+    Calcule la dérivée de S et I en fonction de y et t des équations de
+    paramètres a et alpha.
 
-    :param y: un couple de float représentant les solutions précédentes des équations.
+    :param y: un couple de float représentant les solutions précédentes
+              des équations.
     :param t: un nombre représentant l'évaluation en t de S et I.
-    :param a: le coefficient représentant le taux d'infection du système, doit être > 0.
-    :param alpha: le coefficient représentant le taux de rémission du système, doit être > 0.
-    :return: un couple représentant la dérivée de S et I au moment t. 
+    :param a: le coefficient représentant le taux d'infection du système,
+              doit être > 0.
+    :param alpha: le coefficient représentant le taux de rémission du système,
+              doit être > 0.
+    :return: un couple représentant la dérivée de S et I au moment t.
     '''
     s, i = y
     si = [
@@ -58,32 +67,38 @@ def sir(y, t, a, alpha):
     ]
     return si
 
-# Calcul de l'EDO en fonction des conditions initiales s0, i0 et des paramètre a et alpha
+# Calcul de l'EDO en fonction des conditions initiales s0, i0 et des paramètre
+# a et alpha
 def computeODE(initial_state, a, alpha):
     '''
-    Calcule une solution du modèle SIR en fonction des conditions initiales s_0 et i_0 en t=0 et les coefficients a et alpha.
-    
-    :param initial_state: tuple s_0, i_0 représentant les conditions initiales des équations différentielles.
+    Calcule une solution du modèle SIR en fonction des conditions initiales
+    s_0 et i_0 en t=0 et les coefficients a et alpha.
+
+    :param initial_state: tuple s_0, i_0 représentant les conditions initiales
+                          des équations différentielles.
     :param a: valeur de a, un nombre a > 0.
     :param alpha: valeur de alpha, un nombre alpha > 0.
-    :return: 3 listes, la liste des temps t, la listes des images de t par S et une liste des images de t par I. 
+    :return: 3 listes, la liste des temps t, la listes des images de t par S et
+             une liste des images de t par I.
     '''
-    
+
     t = np.linspace(0, 40, 1000)
     f_args = (a, alpha)
     sol = odeint(sir, initial_state, t, args = f_args)
     return (t, sol[:, 0], sol[:, 1])
-  
+
 
 #Q8
 def findMinimumInfected(a, alpha, find):
     """
-    Calcule le taux minimum d'infecté initial tel que l'infection dépasse un seuil donné
+    Calcule le taux minimum d'infecté initial tel que l'infection dépasse un
+    seuil donné
 
     :param a: valeur de a, un nombre a > 0.
     :param alpha: valeur de alpha, un nombre alpha > 0.
     :param find: le seuil d'infection souhaité
-    :return: la valeur minimale du taux d'infectés initial tel que l'infection dépasse le seuil
+    :return: la valeur minimale du taux d'infectés initial tel que l'infection
+             dépasse le seuil
     """
 
     """
@@ -108,8 +123,10 @@ def q9(a, alpha, nbr_test =  100):
 
     :param a: valeur de a, un nombre a > 0.
     :param alpha: valeur de alpha, un nombre alpha > 0.
-    :param nbr_test: (optionnel) nombre de tests effectués (valeur de base fixée à 100)
-    :return: Le résultat du test sous forme d'un pourcentage indiquant la proportion de test réussis
+    :param nbr_test: (optionnel) nombre de tests effectués (valeur de base
+                     fixée à 100)
+    :return: Le résultat du test sous forme d'un pourcentage indiquant la
+             proportion de test réussis
     """
     max_err = 0
     passed_test = 0
@@ -137,8 +154,8 @@ def q9(a, alpha, nbr_test =  100):
 
 #Q10
 def q10(a, i0, find):
-    """Calcule le alpha minimal qu'il faudrais atteindre pour garantir que l'infection
-    ne dépasse pas le seuil find en fonction du facteur a et i0
+    """Calcule le alpha minimal qu'il faudrais atteindre pour garantir que
+    l'infection ne dépasse pas le seuil find en fonction du facteur a et i0
 
     :param a: valeur de a, un nombre a>0
     :param i0: le porcentage d'infectés initial
@@ -155,7 +172,7 @@ def q10(a, i0, find):
 
     upper_bound = 1.5 * (a * (1-find))
     lower_bound = 0.5 * (a * (1-find))
-    
+
     sol = brentq(f, lower_bound, upper_bound)
     return sol
 
@@ -168,7 +185,7 @@ def calculateTriangle(val_a, val_alpha):
     :param val_alpha: valeur de alpha, un nombre alpha > 0.
     :return:
     """
-    
+
 
     # Représentation du triangle pour la fonction plt.fill() de matplotlib.
     triangle_x = [0, 1, 0]
@@ -176,22 +193,27 @@ def calculateTriangle(val_a, val_alpha):
 
     # Plot du triangle T.
     plt.fill(triangle_x, triangle_y, alpha = 0.1)
-    
-    # Borne inférieure du nombre d'infecté initial, le cas ou le nombres d'infecté étant constant, il n'est pas intéressant
-    # donc on la met proche de 0.
+
+    # Borne inférieure du nombre d'infecté initial, le cas ou le nombres
+    # d'infecté étant constant, il n'est pas intéressant donc on la met
+    # proche de 0.
     init_inf = 0.01
 
-    # Nombres de subdivisions, /!\ augmenter ce paramètre augmente le temps de calcul.
+    # Nombres de subdivisions, /!\ augmenter ce paramètre augmente le temps de
+    # calcul.
     mesh_subdiv = 20
-    # Liste des conditions initiales au bord du triangle donnant le graphe le plus satifaisant et clair
-    init_cond = [(i, init_inf) for i in np.linspace(0.5, 1-init_inf, mesh_subdiv//2)]
+    # Liste des conditions initiales au bord du triangle donnant le graphe le
+    # plus satifaisant et clair
+    treshold = mesh_subdiv//2
+    init_cond = [(i, init_inf) for i in np.linspace(0.5, 1-init_inf, treshold)]
     init_cond += [(1-i, i) for i in np.linspace(0, 1, mesh_subdiv)]
-    
+
     for i, j in init_cond:
         time, x_sol, y_sol = computeODE((i, j), val_a, val_alpha)
         plt.plot(x_sol, y_sol, color="red")
-        
-        # Plot des flèches indiquant le sens des solutions (pas ideal mais faute d'avoir mieux pour l'instant).
+
+        # Plot des flèches indiquant le sens des solutions (pas ideal mais faute
+        # d'avoir mieux pour l'instant).
         for arr_p in range(1, 4):
             k = math.floor(len(x_sol)* arr_p/10)
             arrow_vect = (x_sol[k+1],
@@ -204,8 +226,22 @@ def calculateTriangle(val_a, val_alpha):
     plt.grid()
     plt.show()
 
-    
+
 def solveSITR(a, alpha, gamma, eta, delta, initial_state, t):
+    """
+    Retourne une lambda fonction résolvant le système SITR pour les conditions
+    initiales pour des paramètres a, alpha, gamma, eta et delta.
+
+    :param a: taux d'infection
+    :param alpha: taux de guérison naturelle
+    :param gamma: taux de traitement
+    :param eta: taux de guérison
+    :param delta: taux de réduction de transmission
+    :param initial_state: conditions initiales de l'edo
+    :param t: itérable représentant le temps
+    :return: une fonction lambda représentant l'edo de paramètres donnés dont
+    les variables sont les conditions initiales
+    """
     f_args = (a, alpha, gamma, eta, delta)
     def sitr(y, t, a, alpha, gamma, eta, delta):
         S, I, T = y
@@ -223,13 +259,37 @@ def solveSITR(a, alpha, gamma, eta, delta, initial_state, t):
     return f
 
 
-
 def evalSITR(a, alpha, gamma, eta, delta, initial_state, t):
+    """
+    Evaluation de la fonction retournée par solveSITR
+
+    :param a: taux d'infection
+    :param alpha: taux de guérison naturelle
+    :param gamma: taux de traitement prodigué
+    :param eta: taux de guérison
+    :param delta: taux de réduction de transmission
+    :param initial_state: conditions initiales de l'edo
+    :param t: itérable représentant le temps
+    :return: evaluation de la fonction retournée par solveSITR
+    """
     ev = solveSITR(a, alpha, gamma, eta, delta, initial_state, t)
     return ev(initial_state, t)
 
 
 def computeGamma(a, alpha, eta, delta, initial_state, obj):
+    """
+    Retourne le gamma minimum à atteindre pour que l'infection ne dépasse
+    pas la valeur obj
+
+    :param a: taux d'infection
+    :param alpha: taux de guérison naturelle
+    :param eta: taux de guérison
+    :param delta: taux de réduction de transmission
+    :param initial_state: conditions initiales de l'edo
+    :param obj: objectif du taux d'infection maximal de l'épidémie
+    :return: le gamma tel que le taux d'infecté maximal de l'épidémie
+             est obj
+    """
     def maxI(gamma):
         """
         fonction retournant la valeur maximale de I en fonction de gamma
@@ -250,7 +310,7 @@ def computeGamma(a, alpha, eta, delta, initial_state, obj):
             return ev[0][1]
         # recherche d'une racine
         t = brentq(fct, 0, 40)
-        # evaluation de I en son maximum 
+        # evaluation de I en son maximum
         ev2 = evalSITR(a, alpha, gamma, eta, delta, initial_state, [0, t])
         return ev2[1][1]
     # recherche de la racine de la fonction maxI
@@ -259,6 +319,21 @@ def computeGamma(a, alpha, eta, delta, initial_state, obj):
     return brentq(to_max, 0, 40)
 
 def computeTMax(a, alpha, gamma, eta, delta, initial_state):
+    """
+    Retourne le gamma minimum à atteindre pour que l'infection ne dépasse
+    pas la valeur obj
+
+    :param a: taux d'infection
+    :param alpha: taux de guérison naturelle
+    :param gamma: taux de traitement prodigué
+    :param eta: taux de guérison
+    :param delta: taux de réduction de transmission
+    :param initial_state: conditions initiales de l'edo
+    :return: le gamma tel que le taux d'infecté maximal de l'épidémie
+             est obj
+    """
+
+    
     # dérivée de T, issue de des equations (3a)-(3c)
     deriv = lambda ev, i: gamma*ev[i][1]-eta*ev[i][2]
 
@@ -279,27 +354,25 @@ def computeTMax(a, alpha, gamma, eta, delta, initial_state):
     # retour de la fonction T(t) en t
     return ev2[1][2]
 
-    
 
 
-
-
-
-# Cette partie de code gère les arguments passés en ligne de commande pour plus de simplicité
-# mais les fonctions de ce projets peuvent évidemment être importée dans un autre code
+# Cette partie de code gère les arguments passés en ligne de commande pour plus
+# de simplicité mais les fonctions de ce projets peuvent évidemment être
+# importée dans un autre code
 if __name__ == "__main__":
     arguments = docopt(__doc__, version='0.1.1rc')
 
-    if arguments['-c']:
+    if arguments['--q6']:
         try:
             a, alpha = float(arguments['<a>']), float(arguments['<alpha>'])
             calculateTriangle(a, alpha)
         except:
             print("a et alpha doivent être des valeurs réelles")
 
-    if arguments['-m']:
+    if arguments['--q8']:
         try:
-            a, alpha, i = float(arguments['<a>']), float(arguments['<alpha>']), float(arguments['<i>'])
+            a, alpha = float(arguments['<a>']), float(arguments['<alpha>'])
+            i = float(arguments['<i>'])
             print(findMinimumInfected(a, alpha, i))
         except:
             print("a et alpha et i doivent être des valeurs réelles")
@@ -312,7 +385,7 @@ if __name__ == "__main__":
                 if nbr_test <= 0:
                     raise ValueError
             except:
-                print("nbr_test doit être une valeure entière positive non nulle")
+                print("nbr_test doit être un naturel non nul")
         try:
             a, alpha = float(arguments['<a>']), float(arguments['<alpha>'])
             print(q9(a, alpha, nbr_test))
@@ -325,12 +398,12 @@ if __name__ == "__main__":
             a = float(arguments['<a>'])
             i0 = float(arguments['<i0>'])
             find = float(arguments['<find>'])
-            print(q10(a, i0, find))
+            print(f"Valeur de alpha : {q10(a, i0, find)}")
         except:
             print("a et i et f doivent être des valeurs réelles")
 
-    print()
-    gamma = computeGamma(0.9, 0.1, 0.5, 0.3, (0.99, 0.01, 0), 0.15)
-    T = computeTMax(0.9, 0.1, gamma, 0.5, 0.3, (0.99, 0.01, 0))
-    print(gamma)
-    print(T)
+    if arguments['--q11']:
+        gamma = computeGamma(0.9, 0.1, 0.5, 0.3, (0.99, 0.01, 0), 0.15)
+        T = computeTMax(0.9, 0.1, gamma, 0.5, 0.3, (0.99, 0.01, 0))
+        print(f"Valeur de gamma : {gamma}")
+        print(f"Valeur du maximum de T : {T}")
